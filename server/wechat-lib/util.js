@@ -57,9 +57,10 @@ function  formatMessage(result) {
 
 function tpl(content,message) {
   let type = 'text';
+  console.log('tpl:  ' + content)
 
   if(Array.isArray(content)) {
-    type = 'new'
+    type = 'news'
   }
 
   if(!content) {
