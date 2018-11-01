@@ -3,6 +3,7 @@
  */
 import  xml2js from 'xml2js'
 import template from './tpl'
+import sha1 from 'sha1'
 
 function parseXML(xml) {
 
@@ -82,8 +83,81 @@ function tpl(content,message) {
   return template(info);
 }
 
+/**
+ * 生成14位随机字符
+ * @returns {string}
+ */
+function createNonce() {
+  return Math.random().toString(36).substr(2,15);
+}
+
+/**
+ * 创建时间戳
+ * @returns {string}
+ */
+function createTimestamp() {
+  return parseInt(new Date().getTime()/1000,0) + '';
+}
+
+/**
+ * 对签名参数进行排序(具体规则请查看微信api文档 jsapi_ticket)
+ * @param args
+ * @returns {string}
+ */
+function raw(args) {
+  let keys= Object.keys(args);
+  let newArgs = {};
+  let str = '';
+  keys = keys.sort();
+  keys.forEach((key) => {
+    newArgs[key.toLowerCase()] = args[key];
+  });
+  for(let k in newArgs) {
+    str += '&' + k + '=' + newArgs[k];
+  }
+  // 从1开始,主要去掉第一个空字符
+  return str.substr(1);
+}
+
+/**
+ * 对参数进行签名
+ * @param nonce
+ * @param ticket
+ * @param timestamp
+ * @param url
+ * @returns {*}
+ */
+function signIt(nonce,ticket,timestamp,url) {
+  const  ret = {
+    jsapi_ticket: ticket,
+    nonceStr: nonce,
+    timestamp: timestamp,
+    url: url
+  };
+  console.log('字符串处理');
+  const string = raw(ret);
+  console.log('sha加密-----');
+  const  sha = sha1(string);
+  return sha;
+
+
+}
+
+function sign(ticket,url) {
+  const nonce = createNonce();
+  const timesTamp = createTimestamp();
+  console.log(nonce + timesTamp + '签名字符串' + url);
+  const signature = signIt(nonce,ticket,timesTamp,url);
+  return {
+    noncestr: nonce,
+    timestamp: timesTamp,
+    signature: signature
+  }
+}
+
 export {
   parseXML,
   formatMessage,
-  tpl
+  tpl,
+  sign
 }

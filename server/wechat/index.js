@@ -6,6 +6,7 @@ import  config from '../config'
 import  WeChat from '../wechat-lib'
 
 const Token = mongoose.model('Token')
+const Ticket = mongoose.model('Ticket')
 
 /**
  * 微信 配置
@@ -16,8 +17,12 @@ const  wechatConfig = {
     appID: config.wechat.appID,
     appSecret: config.wechat.appSecret,
     token:config.wechat.token,
+    // 操作token
     getAccessToken: async () => await Token.getAccessToken(),
-    saveAccessToken: async (data) => await  Token.saveAccessToken(data)
+    saveAccessToken: async (data) => await  Token.saveAccessToken(data),
+    // 操作ticket
+    getTicket: async () => await  Ticket.getTicket(),
+    saveTicket: async (data) => await Ticket.saveTicket(data)
   }
 }
 
