@@ -7,7 +7,7 @@ import config from '../config'
 import sha1 from 'sha1'
 import reply from '../wechat/reply'
 import wechatMiddle from '../wechat-lib/middleware'
-import { signature } from "../controllers/wechat";
+import { signature,redirect,oauth } from "../controllers/wechat";
 
 
 export const router = app => {
@@ -33,7 +33,9 @@ export const router = app => {
   // })
 
   router.all('/wechat-hear',wechatMiddle(config.wechat,reply));
-  router.get('/wechat-signature',signature)
+  router.get('/wechat-signature',signature);
+  router.get('/wechat-redirect',redirect);
+  router.get('/wechat-oauth',oauth);
   app
     .use(router.routes())
     .use(router.allowedMethods())
